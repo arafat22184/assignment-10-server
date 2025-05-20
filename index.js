@@ -29,6 +29,10 @@ async function run() {
       .db("assignment-10")
       .collection("allGroupsCollection");
 
+    const userGroupCollection = client
+      .db("assignment-10")
+      .collection("userGroupCollection");
+
     app.get("/allGroups", async (req, res) => {
       const cursor = allGroupsCollection.find();
       const result = await cursor.toArray();
@@ -39,6 +43,18 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await allGroupsCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.get("/userGroups", async (req, res) => {
+      const cursor = userGroupCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/userGroups", async (req, res) => {
+      const newGroup = req.body;
+      const result = await userGroupCollection.insertOne(newGroup);
       res.send(result);
     });
 
