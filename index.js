@@ -52,6 +52,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/userGroups/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userGroupCollection.findOne(query);
+      res.send(result);
+    });
+
     app.post("/userGroups", async (req, res) => {
       const newGroup = req.body;
       const result = await userGroupCollection.insertOne(newGroup);
