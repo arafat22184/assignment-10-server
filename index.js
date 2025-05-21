@@ -65,6 +65,32 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/userGroups/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedGroup = req.body;
+      console.log(updatedGroup);
+
+      const updatedDoc = {
+        $set: updatedGroup,
+      };
+
+      const result = await userGroupCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
+    app.delete("/userGroups/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userGroupCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
