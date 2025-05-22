@@ -1,6 +1,6 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const port = process.env.PORT || 3000;
@@ -21,24 +21,19 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-
-    //MY DB ALL Functionalities
+    //ALL GROUPS Collection
     const allGroupsCollection = client
       .db("assignment-10")
       .collection("allGroupsCollection");
 
-    const userGroupCollection = client
-      .db("assignment-10")
-      .collection("userGroupCollection");
-
+    // Get All Groups
     app.get("/allGroups", async (req, res) => {
       const cursor = allGroupsCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
+    // Get Single Group
     app.get("/allGroups/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -46,37 +41,24 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/userGroups", async (req, res) => {
-      const cursor = userGroupCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-    });
-
-    app.get("/userGroups/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await userGroupCollection.findOne(query);
-      res.send(result);
-    });
-
-    app.post("/userGroups", async (req, res) => {
+    app.post("/allGroups", async (req, res) => {
       const newGroup = req.body;
-      const result = await userGroupCollection.insertOne(newGroup);
+      const result = await allGroupsCollection.insertOne(newGroup);
       res.send(result);
     });
 
-    app.put("/userGroups/:id", async (req, res) => {
+    // Update Group Data
+    app.put("/allGroups/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updatedGroup = req.body;
-      console.log(updatedGroup);
 
       const updatedDoc = {
         $set: updatedGroup,
       };
 
-      const result = await userGroupCollection.updateOne(
+      const result = await allGroupsCollection.updateOne(
         filter,
         updatedDoc,
         options
@@ -84,11 +66,11 @@ async function run() {
       res.send(result);
     });
 
-    // Delete User data
-    app.delete("/userGroups/:id", async (req, res) => {
+    // Delete Group Data
+    app.delete("/allGroups/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await userGroupCollection.deleteOne(query);
+      const result = await allGroupsCollection.deleteOne(query);
       res.send(result);
     });
 
