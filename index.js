@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
+const { startOfToday, format } = require("date-fns");
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -31,6 +32,26 @@ async function run() {
       const cursor = allGroupsCollection.find();
       const result = await cursor.toArray();
       res.send(result);
+    });
+
+    // Get Six Groups
+    app.get("/sixGroups", async (req, res) => {
+      try {
+        const today = format(startOfToday(), "yyyy-MM-dd");
+
+        const groups = await allGroupsCollection
+          .find({
+            startDate: { $gte: today },
+          })
+          .sort({ startDate: 1 })
+          .limit(6)
+          .toArray();
+
+        res.send(groups);
+      } catch (error) {
+        console.error("Error in /sixGroups:", error);
+        res.status(500).send({ error: "Internal Server Error" });
+      }
     });
 
     // Get Single Group
@@ -66,7 +87,7 @@ async function run() {
       res.send(result);
     });
 
-    // Delete Group Data
+    // Delete Group Datas
     app.delete("/allGroups/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
