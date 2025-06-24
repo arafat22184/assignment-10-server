@@ -24,7 +24,7 @@ The server is built with **Node.js**, **Express.js**, and **MongoDB**, and it ha
 
 ## 📦 Tech Stack
 
-| Category      | Tools & Libraries                         |
+| Category      | Tools & Libraries                          |
 | ------------- | ------------------------------------------ |
 | **Runtime**   | Node.js                                    |
 | **Framework** | Express.js                                 |
@@ -64,7 +64,8 @@ npm start
 ```
 
 📌 Example API Endpoints
-| Method	Endpoint	Description
+
+| Method | Endpoint	     | Description                 |
 | ------ | ------------- | --------------------------- |
 | GET    | /groups       | Get all hobby groups        |
 | POST	 | /groups	     | Create a new hobby group    |
