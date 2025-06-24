@@ -75,6 +75,7 @@ npm start
 | POST	 | /jwt	         | Generate a JWT access token |
 
 ## 📁 Folder Structure
+```
 assignment-10-server/
 ├── .gitignore
 ├── .env
@@ -82,6 +83,7 @@ assignment-10-server/
 ├── package-lock.json
 ├── vercel.json
 ├── index.js
+```
 
 🤝 Contributing
 Contributions are welcome!
