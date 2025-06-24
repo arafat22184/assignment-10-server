@@ -74,7 +74,7 @@ npm start
 | GET	   | /users/:email |	Get a user by email        |
 | POST	 | /jwt	         | Generate a JWT access token |
 
-📁 Folder Structure
+## 📁 Folder Structure
 assignment-10-server/
 ├── .gitignore
 ├── .env
