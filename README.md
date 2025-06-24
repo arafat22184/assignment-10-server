@@ -65,14 +65,16 @@ npm start
 
 📌 Example API Endpoints
 
-| Method | Endpoint	     | Description                 |
-| ------ | ------------- | --------------------------- |
-| GET    | /groups       | Get all hobby groups        |
-| POST	 | /groups	     | Create a new hobby group    |
-| PUT	   | /groups/:id	 | Update a group by ID        |
-| DELETE | /groups/:id	 | Delete a group by ID        |
-| GET	   | /users/:email |	Get a user by email        |
-| POST	 | /jwt	         | Generate a JWT access token |
+| Method | Endpoint          | Description                                                           |
+|--------|-------------------|-----------------------------------------------------------------------|
+| GET    | /allGroups        | Get all hobby groups                                                  |
+| GET    | /sixGroups        | Get six upcoming groups starting today or later, sorted by start date |
+| GET    | /allGroups/:id    | Get a single hobby group by its ID                                    |
+| POST   | /allGroups        | Create a new hobby group                                              |
+| PUT    | /allGroups/:id    | Update an existing hobby group by ID                                  |
+| DELETE | /allGroups/:id    | Delete a hobby group by ID                                            |
+| GET    | /users/:email     | Get user information by email                                         |
+| POST   | /jwt              | Generate a JWT access token                                           |
 
 ## 📁 Folder Structure
 ```
