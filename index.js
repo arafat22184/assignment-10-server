@@ -27,6 +27,11 @@ async function run() {
       .db("assignment-10")
       .collection("allGroupsCollection");
 
+    // ALL JOINED GROUP Collection
+    const allJoinedGroups = client
+      .db("assignment-10")
+      .collection("allJoinedGroups");
+
     // Get All Groups
     app.get("/allGroups", async (req, res) => {
       try {
@@ -110,6 +115,72 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await allGroupsCollection.deleteOne(query);
       res.send(result);
+    });
+
+    // Join Group Get
+    app.get("/joinedGroups", async (req, res) => {
+      try {
+        const email = req.query.email;
+
+        if (!email) {
+          const result = await allJoinedGroups.find().toArray();
+          return res.send(result);
+        }
+
+        const query = { userEmail: email };
+        const result = await allJoinedGroups.find(query).toArray();
+        res.send(result);
+      } catch (err) {
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
+
+    // Join Group Post
+    app.post("/joinGroup", async (req, res) => {
+      try {
+        const data = req.body;
+        const groupId = data.groupId;
+        const userEmail = data.userEmail;
+
+        // Find the group
+        const query = { _id: new ObjectId(groupId) };
+        const group = await allGroupsCollection.findOne(query);
+
+        if (!group) {
+          return res.status(404).json({ error: "Group not found" });
+        }
+
+        // Check if user is the creator
+        if (group.email === userEmail) {
+          return res
+            .status(400)
+            .json({ error: "You cannot join a group you created." });
+        }
+
+        // Check if user already joined
+        const alreadyJoined = group.members?.includes(userEmail);
+        if (alreadyJoined) {
+          return res
+            .status(409)
+            .json({ error: "You have already joined this group." });
+        }
+
+        // Update group with new member
+        const updateResult = await allGroupsCollection.updateOne(query, {
+          $push: { members: userEmail },
+        });
+
+        // Save joined data separately if needed
+        const result = await allJoinedGroups.insertOne(data);
+
+        return res.status(200).json({
+          message: "Group joined successfully",
+          updateResult,
+          joinRecord: result,
+        });
+      } catch (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
     });
 
     // Send a ping to confirm a successful connection
