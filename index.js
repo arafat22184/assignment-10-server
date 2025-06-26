@@ -29,9 +29,26 @@ async function run() {
 
     // Get All Groups
     app.get("/allGroups", async (req, res) => {
-      const cursor = allGroupsCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
+      try {
+        const searchText = req.query?.search?.trim();
+
+        // No search text: return all blogs
+        if (!searchText) {
+          const result = await allGroupsCollection.find().toArray();
+          return res.json(result);
+        }
+
+        // Case-insensitive regex search only on title
+        const regex = new RegExp(searchText, "i");
+
+        const result = await allGroupsCollection
+          .find({ groupName: { $regex: regex } })
+          .toArray();
+
+        return res.json(result);
+      } catch (error) {
+        res.status(500).json({ error: "Groups Database error" });
+      }
     });
 
     // Get Six Groups
@@ -44,7 +61,7 @@ async function run() {
             startDate: { $gte: today },
           })
           .sort({ startDate: 1 })
-          .limit(6)
+          .limit(8)
           .toArray();
 
         res.send(groups);
