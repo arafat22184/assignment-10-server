@@ -183,6 +183,39 @@ async function run() {
       }
     });
 
+    // Join Group Delete
+    // Join Group Delete
+    app.delete("/joinGroup", async (req, res) => {
+      try {
+        const { userEmail, groupId } = req.body;
+
+        if (!userEmail || !groupId) {
+          return res.status(400).json({ error: "Missing required fields." });
+        }
+
+        // 1. Delete from allJoinedGroups
+        const deleteResult = await allJoinedGroups.deleteOne({
+          userEmail,
+          groupId,
+        });
+
+        // 2. Remove userEmail from members array in allGroupsCollection
+        const updateResult = await allGroupsCollection.updateOne(
+          { _id: new ObjectId(groupId) },
+          { $pull: { members: userEmail } } // <-- Removes userEmail from array
+        );
+
+        res.status(200).json({
+          message: "Left group successfully.",
+          deleteRecord: deleteResult,
+          updateGroup: updateResult,
+        });
+      } catch (err) {
+        console.error("Error leaving group:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
