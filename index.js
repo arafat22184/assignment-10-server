@@ -127,9 +127,23 @@ async function run() {
           return res.send(result);
         }
 
-        const query = { userEmail: email };
-        const result = await allJoinedGroups.find(query).toArray();
-        res.send(result);
+        // 1. Get all joined records for user
+        const joinedRecords = await allJoinedGroups
+          .find({ userEmail: email })
+          .toArray();
+
+        // 2. Extract groupIds from join records
+        const groupIds = joinedRecords.map(
+          (record) => new ObjectId(record.groupId)
+        );
+
+        // 3. Query allGroupsCollection for these groups
+        const groups = await allGroupsCollection
+          .find({ _id: { $in: groupIds } })
+          .toArray();
+
+        // 4. Return full group data
+        res.status(200).json(groups);
       } catch (err) {
         res.status(500).json({ error: "Internal Server Error" });
       }
@@ -183,7 +197,6 @@ async function run() {
       }
     });
 
-    // Join Group Delete
     // Join Group Delete
     app.delete("/joinGroup", async (req, res) => {
       try {
